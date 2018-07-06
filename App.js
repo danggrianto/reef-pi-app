@@ -1,27 +1,11 @@
 import React from 'react';
-import { Text, View } from 'react-native';
 import { createBottomTabNavigator } from 'react-navigation';
 import { Ionicons } from '@expo/vector-icons';
 
-class HomeScreen extends React.Component {
-  render() {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>Home!</Text>
-      </View>
-    );
-  }
-}
+import { colors } from './src/Utils/theme'
 
-class SettingsScreen extends React.Component {
-  render() {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>Settings!</Text>
-      </View>
-    );
-  }
-}
+import HomeScreen from './src/Screens/Home';
+import SettingsScreen from './src/Screens/Settings';
 
 export default createBottomTabNavigator({
   Home: HomeScreen,
@@ -37,14 +21,11 @@ export default createBottomTabNavigator({
       } else if (routeName === 'Settings') {
         iconName = `ios-options${focused ? '' : '-outline'}`;
       }
-
-      // You can return any component that you like here! We usually use an
-      // icon component from react-native-vector-icons
       return <Ionicons name={iconName} size={25} color={tintColor} />;
     },
   }),
   tabBarOptions: {
-    activeTintColor: 'tomato',
+    activeTintColor: colors.primary,
     inactiveTintColor: 'gray',
   },
 });
