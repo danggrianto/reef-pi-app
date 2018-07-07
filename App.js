@@ -6,9 +6,11 @@ import { colors } from './src/Utils/theme'
 
 import HomeScreen from './src/Screens/Home';
 import SettingsScreen from './src/Screens/Settings';
+import EquipmentsScreen from './src/Screens/Equipments';
 
 export default createBottomTabNavigator({
   Home: HomeScreen,
+  Equipments: EquipmentsScreen,
   Settings: SettingsScreen,
 },
 {
@@ -18,6 +20,8 @@ export default createBottomTabNavigator({
       let iconName;
       if (routeName === 'Home') {
         iconName = `ios-home${focused ? '' : '-outline'}`;
+      } else if (routeName === 'Equipments') {
+        iconName = `ios-bulb${focused ? '' : '-outline'}`;
       } else if (routeName === 'Settings') {
         iconName = `ios-options${focused ? '' : '-outline'}`;
       }

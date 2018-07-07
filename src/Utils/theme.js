@@ -2,7 +2,8 @@
 const colors = {
     primary: '#1da2d8',
     darkBlue: '#064273',
-    lighterBlue: '#def3f6'
+    lighterBlue: '#def3f6',
+    success: '#5cb85c'
 };
   
 export {
