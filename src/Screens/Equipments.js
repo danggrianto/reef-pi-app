@@ -1,18 +1,9 @@
 import React from 'react';
 
 import { View } from 'react-native';
-import { Header, List, ListItem, Button } from 'react-native-elements';
-import ToggleSwitch from 'toggle-switch-react-native'
+import { Header, List, Button } from 'react-native-elements';
 
 import { colors } from '../Utils/theme';
-import { updateLocale } from '../../node_modules/moment';
-const list = [
-{
-    title: 'Sumping'
-},
-{
-    title: 'Something'
-}]
 
 class EquipmentsScreen extends React.Component {
     constructor(props) {
