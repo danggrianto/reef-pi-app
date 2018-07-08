@@ -1,10 +1,11 @@
 import React from 'react';
 
-import { View } from 'react-native';
+import { View, ScrollView } from 'react-native';
 import { Header} from 'react-native-elements';
 
-import EquipmentCard from '../components/EquipmentCard'
+import EquipmentCard from '../Components/EquipmentCard'
 import { colors } from '../Utils/theme';
+import { fetchEquipments, updateEquipment } from '../Services/api'
 
 class EquipmentsScreen extends React.Component {
     constructor(props) {
@@ -12,31 +13,28 @@ class EquipmentsScreen extends React.Component {
         this.state = {
           equipments: null
         };
-        this.fetchEquipments = this.fetchEquipments.bind(this);
         this.toggleEquipment = this.toggleEquipment.bind(this);
         this.renderEquipments = this.renderEquipments.bind(this);
+        this.updateEquipments = this.updateEquipments.bind(this);
     }
 
     componentWillMount() {
-        this.fetchEquipments()
+        this.updateEquipments()
     }
 
-    fetchEquipments () {
-        // temporary
-        this.setState({equipments: [
-            {title: 'Sump', active: true},
-            {title: 'Heater', active: false}
-        ]})
+    updateEquipments(){
+        fetchEquipments().then(equipments => {
+            this.setState({equipments})
+        })
     }
 
     toggleEquipment(equipmentId, toggle) {
-        console.log('TOGGLE')
         let equipments = [...this.state.equipments];
-        console.log(equipments)
-        let index = equipments.findIndex(el => el.title === equipmentId);
-        equipments[index] = {...equipments[index], active: toggle==='ON'};
-        this.setState({ equipments });     
-        console.log(equipments)    
+        let index = equipments.findIndex(el => el.id === equipmentId);
+        equipments[index] = {...equipments[index], on: toggle==='ON'};
+        updateEquipment(equipments[index]).then(()=>{
+            this.updateEquipments();
+        })
     }
 
     renderEquipments(){
@@ -56,7 +54,9 @@ class EquipmentsScreen extends React.Component {
             backgroundColor={colors.darkBlue}
             centerComponent={{ text: 'EQUIPMENTS', style: { color: 'white', fontWeight: 'bold', fontSize: 17 } }}
           />
+          <ScrollView contentContainerStyle={{paddingBottom: 100}}>
             {this.state.equipments && this.renderEquipments()}
+          </ScrollView>
         </View>
       );
     }
