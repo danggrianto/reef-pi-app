@@ -14,6 +14,7 @@ export default createBottomTabNavigator({
   Settings: SettingsScreen,
 },
 {
+  initialRouteName: 'Equipments',
   navigationOptions: ({ navigation }) => ({
     tabBarIcon: ({ focused, tintColor }) => {
       const { routeName } = navigation.state;

@@ -1,8 +1,9 @@
 import React from 'react';
 
 import { View } from 'react-native';
-import { Header, List, Button } from 'react-native-elements';
+import { Header} from 'react-native-elements';
 
+import EquipmentCard from '../components/EquipmentCard'
 import { colors } from '../Utils/theme';
 
 class EquipmentsScreen extends React.Component {
@@ -12,7 +13,8 @@ class EquipmentsScreen extends React.Component {
           equipments: null
         };
         this.fetchEquipments = this.fetchEquipments.bind(this);
-        this._onPress = this._onPress.bind(this);
+        this.toggleEquipment = this.toggleEquipment.bind(this);
+        this.renderEquipments = this.renderEquipments.bind(this);
     }
 
     componentWillMount() {
@@ -27,11 +29,22 @@ class EquipmentsScreen extends React.Component {
         ]})
     }
 
-    _onPress(item) {
+    toggleEquipment(equipmentId, toggle) {
+        console.log('TOGGLE')
         let equipments = [...this.state.equipments];
-        let index = equipments.findIndex(el => el.title === item.title);
-        equipments[index] = {...equipments[index], active: !item.active};
-        this.setState({ equipments });         
+        console.log(equipments)
+        let index = equipments.findIndex(el => el.title === equipmentId);
+        equipments[index] = {...equipments[index], active: toggle==='ON'};
+        this.setState({ equipments });     
+        console.log(equipments)    
+    }
+
+    renderEquipments(){
+        var toggleEquipment = this.toggleEquipment
+        var equipments = this.state.equipments.map((equipment, i) => {
+            return <EquipmentCard {...equipment} key={i} toggleEquipment={toggleEquipment.bind(this)}/>
+        })
+        return equipments
     }
 
     render() {
@@ -43,13 +56,7 @@ class EquipmentsScreen extends React.Component {
             backgroundColor={colors.darkBlue}
             centerComponent={{ text: 'EQUIPMENTS', style: { color: 'white', fontWeight: 'bold', fontSize: 17 } }}
           />
-          <List containerStyle={{marginTop:0}}>
-            {
-                this.state.equipments.map((item, i) => (
-                <Button large raised backgroundColor={item.active?colors.success:'gray'} key={i} title={item.title} containerViewStyle={{padding: 10}} onPress={()=>this._onPress(item)}/>
-                ))
-            }
-            </List>
+            {this.state.equipments && this.renderEquipments()}
         </View>
       );
     }
