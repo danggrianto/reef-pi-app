@@ -4,6 +4,8 @@ import { View, StyleSheet, Alert, AsyncStorage } from 'react-native';
 import { Header, FormInput, FormLabel, Button } from 'react-native-elements';
 import { colors } from '../Utils/theme';
 
+const base64 = require('base-64');
+
 const style = StyleSheet.create({
   header: {
     color: 'white',
@@ -34,7 +36,25 @@ class SettingsScreen extends React.Component {
   }
 
   connect(){
-    Alert.alert('Test Connection');
+    this.saveSettings()
+    var url = 'http://' + this.state.ip + '/api/settings'
+    var headers = new Headers();
+    headers.append('Authorization', 'Basic ' + base64.encode(this.state.username+':'+this.state.password));
+    fetch(url, { 
+      method: 'get', 
+      headers: headers
+    })
+    .then(function(response) {
+      if (!response.ok) {
+          throw Error(response.statusText);
+      }
+      return response;
+    }).then(function(response) {
+      Alert.alert('Success')
+    }).catch(function(error) {
+      Alert.alert('Unable to connect')
+      console.log(error);
+    });
   }
 
   componentWillMount(){
@@ -56,7 +76,7 @@ class SettingsScreen extends React.Component {
         this.setState({password})
       }
      } catch (error) {
-       console.log(error);  
+       console.log(error)
      }
   }
 
@@ -69,7 +89,6 @@ class SettingsScreen extends React.Component {
       console.log('ERROR SAVING DATA');
       Alert.alert('Error saving data');
     }
-    Alert.alert('Settings saved');
   }
     
   render() {
@@ -82,6 +101,7 @@ class SettingsScreen extends React.Component {
           <View style={{padding:10}}>
             <FormLabel>IP Address</FormLabel>
             <FormInput placeholder='0.0.0.0'
+              autoCapitalize='none'
               onChangeText={(text) => this.setState({ip: text})}
               value={this.state.ip}/>
             <FormLabel>Username</FormLabel>
@@ -96,7 +116,11 @@ class SettingsScreen extends React.Component {
               value={this.state.password}/>
             <View style={style.container}>
             <Button raised backgroundColor={colors.success} title='TEST' containerViewStyle={style.button} onPress={this.connect}/>
-            <Button raised backgroundColor={colors.darkBlue} title='SAVE' containerViewStyle={style.button} onPress={this.saveSettings}/>
+            <Button raised backgroundColor={colors.darkBlue} title='SAVE' containerViewStyle={style.button}
+              onPress={()=>{
+                this.saveSettings()
+                Alert.alert('Settings saved!')
+              }}/>
             </View>
           </View>
       </View>
