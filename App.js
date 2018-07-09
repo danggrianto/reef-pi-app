@@ -9,18 +9,18 @@ import SettingsScreen from './src/Screens/Settings';
 import EquipmentsScreen from './src/Screens/Equipments';
 
 export default createBottomTabNavigator({
-  Home: HomeScreen,
+  Dashboard: HomeScreen,
   Equipments: EquipmentsScreen,
   Settings: SettingsScreen,
 },
 {
-  initialRouteName: 'Equipments',
+  initialRouteName: 'Dashboard',
   navigationOptions: ({ navigation }) => ({
     tabBarIcon: ({ focused, tintColor }) => {
       const { routeName } = navigation.state;
       let iconName;
-      if (routeName === 'Home') {
-        iconName = `ios-home${focused ? '' : '-outline'}`;
+      if (routeName === 'Dashboard') {
+        iconName = `ios-speedometer${focused ? '' : '-outline'}`;
       } else if (routeName === 'Equipments') {
         iconName = `ios-bulb${focused ? '' : '-outline'}`;
       } else if (routeName === 'Settings') {
