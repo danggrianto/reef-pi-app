@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between'
     },
-    title: {
+    name: {
         fontSize:20
     },
     selectedButton: {
@@ -40,19 +40,19 @@ export default class EquipmentCard extends Component {
   };
 
   renderCard() {
-    const status = this.props.active? 'ON':'OFF'
+    const status = this.props.on? 'ON':'OFF'
     const selectedIndex = buttons.indexOf(status)
     const statusIcon = 'ios-radio-button-on'
     let statusColor = status==='ON'? 'green': 'red'
     return (
         <Card containerStyle={styles.card}>
             <View style={styles.header}>
-                <Text style={styles.title}>{this.props.title}</Text>
+                <Text style={styles.name}>{this.props.name}</Text>
                 <Text><Ionicons name={statusIcon} size={12} color={statusColor} /> {status}</Text>
             </View>
             <ButtonGroup
                 buttons={buttons}
-                onPress={(index)=> this.props.toggleEquipment(this.props.title, buttons[index])}
+                onPress={(index)=> this.props.toggleEquipment(this.props.id, buttons[index])}
                 selectedIndex={selectedIndex}
                 selectedButtonStyle={styles.selectedButton}
                 selectedTextStyle={styles.selectedText}
