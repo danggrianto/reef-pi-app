@@ -14,6 +14,14 @@ const styles = StyleSheet.create({
 })
 
 class ModalScreen extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {
+        title: this.props.navigation.state.params.title,
+        data: this.props.navigation.state.params.data
+    }
+  }
+
   render() {
     return (
       <View>
@@ -24,8 +32,9 @@ class ModalScreen extends React.Component {
           icon: 'close',
           color: 'white',
           onPress: () => this.props.navigation.goBack(),
+          underlayColor: colors.darkBlue
         }}
-        centerComponent={{ text: 'DASHBOARD', style: { color: 'white', fontWeight: 'bold', fontSize: 17 } }}
+        centerComponent={{ text: this.state.title, style: { color: 'white', fontWeight: 'bold', fontSize: 17 } }}
       />
         <Text>Hello Modal</Text>
       </View>
@@ -72,7 +81,7 @@ class HomeScreen extends React.Component {
 
   renderChart(title, data, xdata){
     return (
-      <TouchableWithoutFeedback onPress={ () => this.props.navigation.navigate('Modal')}>
+      <TouchableWithoutFeedback onPress={ () => this.props.navigation.navigate('Modal', {title:title, data:data})}>
       <Card title={title} containerStyle={styles.cardContainer} dividerStyle={styles.cardDivider}>
         <LineChart
             style={{ height: 200 }}
