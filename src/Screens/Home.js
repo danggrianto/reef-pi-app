@@ -1,26 +1,54 @@
 import React from 'react';
 
-import { View } from 'react-native';
+import { View, ScrollView, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import { Header, Card, List, ListItem } from 'react-native-elements';
+import { LineChart } from 'react-native-svg-charts'
+import { createStackNavigator } from 'react-navigation'
+
 import { colors } from '../Utils/theme';
-import { fetchEquipments } from '../Services/api'
+import { fetchEquipments, fetchHealth } from '../Services/api'
+
+const styles = StyleSheet.create({
+  cardContainer: {paddingHorizontal:5, paddingBottom:0},
+  cardDivider: {marginBottom:0, height:0}
+})
+
+class ModalScreen extends React.Component {
+  render() {
+    return (
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <Text style={{ fontSize: 30 }}>This is a modal!</Text>
+        <Button
+          onPress={() => this.props.navigation.goBack()}
+          title="Dismiss"
+        />
+      </View>
+    );
+  }
+}
 
 class HomeScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      equipments: null
+      equipments: null,
+      health: null
     };
   }
 
   componentWillMount (){
     fetchEquipments().then(equipments => {
       this.setState({equipments})
-   })
+    })
+    fetchHealth().then(health => {
+      this.setState({health})
+    })
   }
+
   renderEquipments (){
     return (
-      <Card title='Equipments' containerStyle={{paddingHorizontal:5, paddingBottom:0}} dividerStyle={{marginBottom:0}}>
+      <TouchableWithoutFeedback onPress={ () => this.props.navigation.navigate('Controllers')}>
+      <Card title='Equipments' containerStyle={styles.cardContainer} dividerStyle={styles.cardDivider}>
           <List containerStyle={{marginTop:0}}>
           { this.state.equipments.map((equipment) => (
               <ListItem
@@ -31,8 +59,36 @@ class HomeScreen extends React.Component {
             ))
           }
         </List>
-        </Card>
+      </Card>
+      </TouchableWithoutFeedback>
     );
+  }
+
+  renderChart(title, data, xdata){
+    return (
+      <Card title={title} containerStyle={styles.cardContainer} dividerStyle={styles.cardDivider}>
+        <LineChart
+            style={{ height: 200 }}
+            data={ data }
+            svg={{ stroke: colors.primary}}
+            contentInset={{ top: 20, bottom: 20 }}>
+        </LineChart>   
+      </Card>
+    )
+  }
+
+  renderHealth (){
+    const current = this.state.health.current
+    const cpu = current.map(data => data.cpu)
+    const memory = current.map(data => data.memory)
+    const time = current.map(data => data.time)
+
+    return (
+      <View>
+        {this.renderChart('CPU', cpu)}
+        {this.renderChart('Memory', memory)}
+      </View>
+    )
   }
 
   render() {
@@ -43,10 +99,22 @@ class HomeScreen extends React.Component {
             backgroundColor={colors.darkBlue}
             centerComponent={{ text: 'DASHBOARD', style: { color: 'white', fontWeight: 'bold', fontSize: 17 } }}
           />
-        { this.state.equipments && this.renderEquipments() }
+        <ScrollView contentContainerStyle={{paddingBottom: 100}}>
+          { this.state.equipments && this.renderEquipments() }
+          { this.state.health && this.renderHealth() }
+        </ScrollView>
       </View>
     );
   }
 }
 
-export default HomeScreen;
+const HomeNav = createStackNavigator({
+  Home: HomeScreen,
+  Modal: ModalScreen,
+},
+{
+  mode: 'modal',
+  headerMode: 'none',
+})
+
+export default HomeNav;

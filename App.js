@@ -1,16 +1,16 @@
 import React from 'react';
-import { createBottomTabNavigator } from 'react-navigation';
+import { createBottomTabNavigator, createStackNavigator } from 'react-navigation';
 import { Ionicons } from '@expo/vector-icons';
 
 import { colors } from './src/Utils/theme'
 
-import HomeScreen from './src/Screens/Home';
+import HomeNav from './src/Screens/Home';
 import SettingsScreen from './src/Screens/Settings';
 import EquipmentsScreen from './src/Screens/Equipments';
 
-export default createBottomTabNavigator({
-  Dashboard: HomeScreen,
-  Equipments: EquipmentsScreen,
+const Main = createBottomTabNavigator({
+  Dashboard: HomeNav,
+  Controllers: EquipmentsScreen,
   Settings: SettingsScreen,
 },
 {
@@ -21,7 +21,7 @@ export default createBottomTabNavigator({
       let iconName;
       if (routeName === 'Dashboard') {
         iconName = `ios-speedometer${focused ? '' : '-outline'}`;
-      } else if (routeName === 'Equipments') {
+      } else if (routeName === 'Controllers') {
         iconName = `ios-bulb${focused ? '' : '-outline'}`;
       } else if (routeName === 'Settings') {
         iconName = `ios-options${focused ? '' : '-outline'}`;
@@ -34,3 +34,21 @@ export default createBottomTabNavigator({
     inactiveTintColor: 'gray',
   },
 });
+
+const RootStack = createStackNavigator(
+  {
+    Main: {
+      screen: Main,
+    }
+  },
+  {
+    mode: 'modal',
+    headerMode: 'none',
+  }
+);
+
+export default class App extends React.Component {
+  render() {
+    return <RootStack />;
+  }
+}
