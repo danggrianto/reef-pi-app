@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { View, ScrollView, StyleSheet, TouchableWithoutFeedback } from 'react-native';
-import { Header, Card, List, ListItem } from 'react-native-elements';
+import { Header, Card, List, ListItem, Button, Text } from 'react-native-elements';
 import { LineChart } from 'react-native-svg-charts'
 import { createStackNavigator } from 'react-navigation'
 
@@ -16,12 +16,18 @@ const styles = StyleSheet.create({
 class ModalScreen extends React.Component {
   render() {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text style={{ fontSize: 30 }}>This is a modal!</Text>
-        <Button
-          onPress={() => this.props.navigation.goBack()}
-          title="Dismiss"
-        />
+      <View>
+        <Header
+        placement="center"
+        backgroundColor={colors.darkBlue}
+        leftComponent={{
+          icon: 'close',
+          color: 'white',
+          onPress: () => this.props.navigation.goBack(),
+        }}
+        centerComponent={{ text: 'DASHBOARD', style: { color: 'white', fontWeight: 'bold', fontSize: 17 } }}
+      />
+        <Text>Hello Modal</Text>
       </View>
     );
   }
@@ -66,6 +72,7 @@ class HomeScreen extends React.Component {
 
   renderChart(title, data, xdata){
     return (
+      <TouchableWithoutFeedback onPress={ () => this.props.navigation.navigate('Modal')}>
       <Card title={title} containerStyle={styles.cardContainer} dividerStyle={styles.cardDivider}>
         <LineChart
             style={{ height: 200 }}
@@ -74,6 +81,7 @@ class HomeScreen extends React.Component {
             contentInset={{ top: 20, bottom: 20 }}>
         </LineChart>   
       </Card>
+      </TouchableWithoutFeedback>
     )
   }
 
