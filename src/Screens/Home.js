@@ -4,21 +4,33 @@ import { View, ScrollView, StyleSheet, TouchableWithoutFeedback } from 'react-na
 import { Header, Card, List, ListItem, Button, Text } from 'react-native-elements';
 import { LineChart } from 'react-native-svg-charts'
 import { createStackNavigator } from 'react-navigation'
+import { Table, Row, Rows } from 'react-native-table-component';
 
 import { colors } from '../Utils/theme';
 import { fetchEquipments, fetchHealth } from '../Services/api'
 
 const styles = StyleSheet.create({
   cardContainer: {paddingHorizontal:5, paddingBottom:0},
-  cardDivider: {marginBottom:0, height:0}
+  cardDivider: {marginBottom:0, height:0},
+  head: { height: 40, backgroundColor: colors.primary },
+  table: { borderWidth: 2, borderColor: colors.darkBlue },
+  text: { margin: 6 }
 })
 
 class ModalScreen extends React.Component {
   constructor(props){
     super(props);
+    const data = this.props.navigation.state.params.data
+    const time =this.props.navigation.state.params.time
+    tableData = []
+    for (let index = data.length-1; index >= 0; index--) {
+      tableData.push([time[index], data[index]])
+    }
+    console.log(tableData)
     this.state = {
         title: this.props.navigation.state.params.title,
-        data: this.props.navigation.state.params.data
+        tableHead: ['Time', 'Data'],
+        tableData: tableData
     }
   }
 
@@ -36,7 +48,12 @@ class ModalScreen extends React.Component {
         }}
         centerComponent={{ text: this.state.title, style: { color: 'white', fontWeight: 'bold', fontSize: 17 } }}
       />
-        <Text>Hello Modal</Text>
+        <ScrollView contentContainerStyle={{paddingBottom: 100}}>
+          <Table borderStyle={styles.table}>
+            <Row data={this.state.tableHead} style={styles.head} textStyle={styles.text}/>
+            <Rows data={this.state.tableData} textStyle={styles.text}/>
+          </Table>
+        </ScrollView>
       </View>
     );
   }
@@ -79,9 +96,9 @@ class HomeScreen extends React.Component {
     );
   }
 
-  renderChart(title, data, xdata){
+  renderChart(title, data, time){
     return (
-      <TouchableWithoutFeedback onPress={ () => this.props.navigation.navigate('Modal', {title:title, data:data})}>
+      <TouchableWithoutFeedback onPress={ () => this.props.navigation.navigate('Modal', {title:title, data:data, time:time})}>
       <Card title={title} containerStyle={styles.cardContainer} dividerStyle={styles.cardDivider}>
         <LineChart
             style={{ height: 200 }}
@@ -102,8 +119,8 @@ class HomeScreen extends React.Component {
 
     return (
       <View>
-        {this.renderChart('CPU', cpu)}
-        {this.renderChart('Memory', memory)}
+        {this.renderChart('CPU', cpu, time)}
+        {this.renderChart('Memory', memory, time)}
       </View>
     )
   }

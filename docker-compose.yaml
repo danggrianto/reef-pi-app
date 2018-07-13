@@ -1,0 +1,7 @@
+version: '2'
+services:
+  mockserver:
+    image: jamesdbloom/mockserver:mockserver-5.3.0
+    ports:
+      - "1080:1080"
+    command: /opt/mockserver/run_mockserver.sh -logLevel INFO -serverPort 1080
