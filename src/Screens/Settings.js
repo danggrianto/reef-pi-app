@@ -1,8 +1,9 @@
 import React from 'react';
 
-import { View, StyleSheet, Alert, AsyncStorage } from 'react-native';
-import { Header, FormInput, FormLabel, Button } from 'react-native-elements';
+import { ScrollView, View, StyleSheet, Alert, AsyncStorage } from 'react-native';
+import { Header, FormInput, FormLabel, Button, Card, List, ListItem } from 'react-native-elements';
 import { colors } from '../Utils/theme';
+import { fetchSettings } from '../Services/api'
 
 const base64 = require('base-64');
 
@@ -28,7 +29,8 @@ class SettingsScreen extends React.Component {
     this.state = {
       ip: null,
       username: null,
-      password: null
+      password: null,
+      settings: null
     };
     this.connect = this.connect.bind(this);
     this.saveSettings = this.saveSettings.bind(this);
@@ -37,19 +39,8 @@ class SettingsScreen extends React.Component {
 
   connect(){
     this.saveSettings()
-    var url = 'http://' + this.state.ip + '/api/settings'
-    var headers = new Headers();
-    headers.append('Authorization', 'Basic ' + base64.encode(this.state.username+':'+this.state.password));
-    fetch(url, { 
-      method: 'get', 
-      headers: headers
-    })
-    .then(function(response) {
-      if (!response.ok) {
-          throw Error(response.statusText);
-      }
-      return response;
-    }).then(function(response) {
+    fetchSettings().then(function(settings) {
+      this.setState({settings})
       Alert.alert('Success')
     }).catch(function(error) {
       Alert.alert('Unable to connect')
@@ -59,6 +50,7 @@ class SettingsScreen extends React.Component {
 
   componentWillMount(){
     this._fetchSettings()
+    fetchSettings().then(settings => this.setState({settings}))
   }
 
   _fetchSettings = async () => {
@@ -90,6 +82,57 @@ class SettingsScreen extends React.Component {
       Alert.alert('Error saving data');
     }
   }
+
+  renderServerInfo(){
+    return (
+      <Card title='Server Info'>
+        <FormLabel>Address</FormLabel>
+        <FormInput placeholder='0.0.0.0'
+          autoCapitalize='none'
+          onChangeText={(text) => this.setState({ip: text})}
+          value={this.state.ip}/>
+        <FormLabel>Username</FormLabel>
+        <FormInput placeholder='username'
+          autoCapitalize='none'
+          onChangeText={(text) => this.setState({username: text})}
+          value={this.state.username}/>
+        <FormLabel>Password</FormLabel>
+        <FormInput secureTextEntry placeholder='password'
+          autoCapitalize='none'
+          onChangeText={(text) => this.setState({password: text})}
+          value={this.state.password}/>
+        <View style={style.container}>
+        <Button raised backgroundColor={colors.success} title='TEST' containerViewStyle={style.button} onPress={this.connect}/>
+        <Button raised backgroundColor={colors.darkBlue} title='SAVE' containerViewStyle={style.button}
+          onPress={()=>{
+            this.saveSettings()
+            Alert.alert('Settings saved!')
+          }}/>
+        </View>
+      </Card>
+    )
+  }
+
+  renderCapabilities(){
+    return (
+      <Card title='Capabilities' dividerStyle={{marginBottom:0}}>
+        <List containerStyle={{marginTop:0}}>
+          { this.state.settings && Object.keys(this.state.settings.capabilities).map((cap, i) => (
+            <ListItem
+            switchButton
+            switched={this.state.settings.capabilities[cap]}
+            hideChevron
+            key={i}
+            title={cap}
+            onSwitch={(value) => {
+              // TODO set state
+            }}
+          />
+          ))}
+        </List>
+      </Card>
+    )
+  }
     
   render() {
     return (
@@ -98,31 +141,10 @@ class SettingsScreen extends React.Component {
           placement="center"
           backgroundColor={colors.darkBlue}
           centerComponent={{ text: 'SETTINGS', style:style.header}}/>
-          <View style={{padding:10}}>
-            <FormLabel>IP Address</FormLabel>
-            <FormInput placeholder='0.0.0.0'
-              autoCapitalize='none'
-              onChangeText={(text) => this.setState({ip: text})}
-              value={this.state.ip}/>
-            <FormLabel>Username</FormLabel>
-            <FormInput placeholder='username'
-              autoCapitalize='none'
-              onChangeText={(text) => this.setState({username: text})}
-              value={this.state.username}/>
-            <FormLabel>Password</FormLabel>
-            <FormInput secureTextEntry placeholder='password'
-              autoCapitalize='none'
-              onChangeText={(text) => this.setState({password: text})}
-              value={this.state.password}/>
-            <View style={style.container}>
-            <Button raised backgroundColor={colors.success} title='TEST' containerViewStyle={style.button} onPress={this.connect}/>
-            <Button raised backgroundColor={colors.darkBlue} title='SAVE' containerViewStyle={style.button}
-              onPress={()=>{
-                this.saveSettings()
-                Alert.alert('Settings saved!')
-              }}/>
-            </View>
-          </View>
+          <ScrollView contentContainerStyle={{paddingBottom: 100}}>
+            {this.renderServerInfo()}
+            {this.renderCapabilities()}
+          </ScrollView>
       </View>
     );
   }

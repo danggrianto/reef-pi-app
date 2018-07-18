@@ -42,6 +42,20 @@ const fetchEquipments = async() => {
     })
 }
 
+const fetchSettings = async() => {
+  var api = await getAPIconfig();
+  return fetch(api.url + '/settings', { 
+    method: 'get', 
+    headers: api.headers
+  })
+  .then(function(response) {
+    if (!response.ok) {
+        throw Error(response.statusText);
+    }
+    return response.json();
+  })
+}
+
 const updateEquipment = async (equipment) => {
     var api = await getAPIconfig();
     return fetch(api.url + '/equipments/' + equipment.id, { 
@@ -75,5 +89,6 @@ const fetchHealth = async() => {
 export {
     fetchEquipments,
     updateEquipment,
-    fetchHealth
+    fetchHealth,
+    fetchSettings
 };
